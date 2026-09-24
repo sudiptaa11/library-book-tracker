@@ -54,13 +54,15 @@ app.post('/api/books', (req, res) => {
     const { title, author, total } = req.body;
 
     if (
-        !title ||
-        !author ||
+        typeof title !== 'string' ||
+        typeof author !== 'string' ||
+        !title.trim() ||
+        !author.trim() ||
         !Number.isInteger(Number(total)) ||
         Number(total) <= 0
     ) {
         return res.status(400).json({
-            error: 'Title, author and a positive total quantity are required'
+            error: 'Valid title, author and a positive total quantity are required'
         });
     }
 
