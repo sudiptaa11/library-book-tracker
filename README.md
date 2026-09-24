@@ -157,3 +157,20 @@ Finally, add:
 - Docker containerization
 - GitHub Actions CI/CD
 
+## CI/CD Pipeline
+
+Git push
+   ↓
+Lint + Test
+   ↓
+Docker Build
+   ↓
+Deploy
+   ↓
+Render
+   ↓
+Live Application
+
+Tests and linting run automatically.
+Docker is built only after successful tests.
+Deployment occurs only after a successful Docker build.
