@@ -82,6 +82,8 @@
         </form>
     </div>
 
+    <input type="text" id="searchInput" placeholder="Search by title or author..." />
+
     <h2>Books</h2>
 
     <div id="books"></div>
@@ -95,34 +97,48 @@
             const response = await fetch('/api/books');
             const books = await response.json();
 
+            const searchText = document
+                .getElementById('searchInput')
+                .value
+                .toLowerCase();
+
+            const filteredBooks = books.filter((book) =>
+                book.title.toLowerCase().includes(searchText) ||
+                book.author.toLowerCase().includes(searchText)
+            );
+
             const container = document.getElementById('books');
 
             container.innerHTML = '';
 
-            books.forEach((book) => {
+            filteredBooks.forEach((book) => {
                 const div = document.createElement('div');
 
                 div.className = 'book';
 
                 div.innerHTML = `
-          <h3>${book.title}</h3>
-          <p>Author: ${book.author}</p>
-          <p class="available">
-            Available: ${book.available} / ${book.total}
-          </p>
+                <h3>${book.title}</h3>
+                <p>Author: ${book.author}</p>
+                <p class="available">
+                    Available: ${book.available} / ${book.total}
+                </p>
 
-          <button onclick="issueBook(${book.id})">
-            Issue
-          </button>
+                <button onclick="issueBook(${book.id})">
+                    Issue
+                </button>
 
-          <button onclick="returnBook(${book.id})">
-            Return
-          </button>
-        `;
+                <button onclick="returnBook(${book.id})">
+                    Return
+                </button>
+                `;
 
                 container.appendChild(div);
             });
         }
+
+        document
+            .getElementById('searchInput')
+            .addEventListener('input', loadBooks);
 
         async function issueBook(id) {
             const response = await fetch(`/api/books/${id}/issue`, {
