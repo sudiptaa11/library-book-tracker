@@ -8,7 +8,6 @@ on:
     branches: [main]
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
 
@@ -26,12 +25,10 @@ jobs:
         run: npm ci
 
       - name: Start server
-        run: npm start > server.log 2>&1 &
-
-      - name: Wait for server
         run: |
+          npm start > server.log 2>&1 &
           for i in {1..10}; do
-            if curl -s http://localhost:3000/health; then
+            if curl -sf http://localhost:3000/health; then
               exit 0
             fi
             sleep 1
@@ -44,7 +41,6 @@ jobs:
 
       - name: Run lint
         run: npm run lint
-
 
   build:
     needs: test
@@ -66,15 +62,12 @@ jobs:
           sleep 5
           curl -f http://localhost:3000/health
 
-
   deploy:
     needs: build
-
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Deploy to Render
         run: |
-        curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
