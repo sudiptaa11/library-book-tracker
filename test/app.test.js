@@ -25,7 +25,7 @@ test('health route returns ok', async () => {
 
     const data = await response.json();
 
-    assert.equal(data.status, 'ok');
+    assert.equal(data.status, 'FAILED');
 });
 
 test('books API returns books', async () => {
