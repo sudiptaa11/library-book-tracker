@@ -117,3 +117,65 @@ test('book can be issued and returned', async () => {
 
     assert.equal(returnedBook.available, 1);
 });
+
+test('returns 404 when issuing a non-existent book', async () => {
+    const response = await fetch(
+        'http://localhost:3000/api/books/9999/issue',
+        {
+            method: 'POST'
+        }
+    );
+
+    assert.equal(response.status, 404);
+
+    const data = await response.json();
+
+    assert.equal(data.error, 'Book not found');
+});
+
+test('returns 404 when returning a non-existent book', async () => {
+    const response = await fetch(
+        'http://localhost:3000/api/books/9999/return',
+        {
+            method: 'POST'
+        }
+    );
+
+    assert.equal(response.status, 404);
+
+    const data = await response.json();
+
+    assert.equal(data.error, 'Book not found');
+});
+
+test('rejects a book with zero copies', async () => {
+    const response = await fetch('http://localhost:3000/api/books', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: 'Test Book',
+            author: 'Test Author',
+            total: 0
+        })
+    });
+
+    assert.equal(response.status, 400);
+});
+
+test('rejects a book with a blank title', async () => {
+    const response = await fetch('http://localhost:3000/api/books', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: '   ',
+            author: 'Test Author',
+            total: 2
+        })
+    });
+
+    assert.equal(response.status, 400);
+});
